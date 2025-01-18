@@ -1,88 +1,43 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>AR.js Object Placement</title>
+    <title>AR.js Virtual Screen</title>
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/aframe-ar@1.7.2/build/aframe-ar.min.js"></script>
     <style>
       body {
         margin: 0;
-        display: flex;
-        flex-direction: column;
       }
       #ar-container {
-        position: fixed;
-        top: 0;
-        left: 0;
         width: 100%;
-        height: 50vh; /* AR window takes half the screen */
-        background-color: black;
-        z-index: 10;
-      }
-      #content {
-        margin-top: 50vh; /* Leave space for the AR window */
-        padding: 20px;
-        overflow-y: scroll;
+        height: 100vh;
       }
     </style>
   </head>
   <body>
-    <p style="text-align: center; font-size: 16px; padding: 10px; background-color: #f8d7da; color: #721c24;">
-      Please allow camera access to use the AR functionality.
-    </p>
     <!-- AR.js Scene -->
     <div id="ar-container">
-      <a-scene
-        embedded
-        arjs="sourceType: webcam; debugUIEnabled: false;"
-        cursor="rayOrigin: mouse"
-      >
-        <!-- Ground Plane -->
+      <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
+        <!-- Virtual Screen -->
         <a-plane
-          position="0 0 0"
-          rotation="-90 0 0"
-          width="5000"
-          height="5000"
-          color="#000000"
-          opacity="0"
-          arjs-ground
+          position="0 1 -3"
+          rotation="0 0 0"
+          width="2"
+          height="1"
+          color="#FFFFFF"
+          material="shader: html; target: #web-content"
         ></a-plane>
 
-        <!-- Placeable Object -->
-        <a-entity
-          id="placeable-object"
-          geometry="primitive: box"
-          material="color: red"
-          position="0 0.5 0"
-          scale="0.5 0.5 0.5"
-          visible="false"
-        ></a-entity>
-
-        <!-- Tap-to-Place Script -->
-        <script>
-          document.addEventListener("click", (event) => {
-            const groundPlane = document.querySelector("[arjs-ground]");
-            const raycaster = groundPlane.components.raycaster;
-
-            const intersected = raycaster.getIntersection(
-              document.querySelector("a-plane")
-            );
-
-            if (intersected) {
-              const object = document.getElementById("placeable-object");
-              object.setAttribute("visible", "true");
-              object.setAttribute("position", intersected.point);
-            }
-          });
-        </script>
+        <!-- HTML Content as Material -->
+        <a-assets>
+          <html-material id="web-content">
+            <iframe
+              src="https://example.com"
+              style="width: 100%; height: 100%; border: none;"
+            ></iframe>
+          </html-material>
+        </a-assets>
       </a-scene>
-    </div>
-
-    <!-- Scrollable Content -->
-    <div id="content">
-      <h1>AR.js Object Placement</h1>
-      <p>Tap anywhere on the ground to place the red box. Scroll down for more information!</p>
-      <p>More content...</p>
     </div>
   </body>
 </html>
