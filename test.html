@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>AR with Scroll</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <style>
+      body {
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+      }
+      #ar-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 50vh; /* AR window takes half the screen */
+        background-color: black;
+        z-index: 10;
+      }
+      #content {
+        margin-top: 50vh; /* Leave space for the AR window */
+        padding: 20px;
+        overflow-y: scroll;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- AR Window -->
+    <div id="ar-container">
+      <a-scene embedded arjs>
+        <a-box position="0 0.5 -2" rotation="0 45 0" color="#4CC3D9"></a-box>
+        <a-plane position="0 0 -4" rotation="-90 0 0" width="4" height="4" color="#7BC8A4"></a-plane>
+        <a-sky color="#ECECEC"></a-sky>
+      </a-scene>
+    </div>
+
+    <!-- Scrollable Content -->
+    <div id="content">
+      <h1>Welcome to AR with Scroll</h1>
+      <p>
+        This is an interactive webpage where AR and regular content coexist. Scroll to explore!
+      </p>
+      <p>More content...</p>
+      <p>Even more content...</p>
+    </div>
+  </body>
+</html>
