@@ -1,45 +1,97 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>AR.js Website Viewer</title>
+    <title>Interactive Nike AR Game with ARCore and WebXR</title>
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/aframe-extras@6.1.1/dist/aframe-extras.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/aframe-ar@1.7.2/build/aframe-ar.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/aframe-physics-system@4.0.1/dist/aframe-physics-system.min.js"></script>
     <style>
       body {
         margin: 0;
         overflow: hidden;
       }
-      iframe {
-        border: none;
-      }
     </style>
   </head>
   <body>
-    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
-      <!-- Virtual Screen -->
-      <a-entity position="0 1 -2">
-        <a-plane
-          position="0 0 0"
-          width="1.5"
-          height="1"
-          color="#FFFFFF"
-        ></a-plane>
-        <!-- Iframe Container -->
-        <a-entity
-          geometry="primitive: plane; height: 1; width: 1.5"
-          material="shader: html; target: #nexshrim-site;"
-          position="0 0 0"
-        ></a-entity>
-      </a-entity>
-      <!-- Website Content -->
-      <a-assets>
-        <html-material id="nexshrim-site">
-          <iframe
-            src="https://nexshrimtechnology.com/"
-            style="width: 100%; height: 100%;"
-          ></iframe>
-        </html-material>
-      </a-assets>
+    <!-- Check for WebXR and ARCore support -->
+    <script>
+      if (!navigator.xr) {
+        alert("Your browser does not support WebXR. Please use a compatible browser like Chrome on Android or Safari on iOS.");
+      } else {
+        navigator.xr.isSessionSupported('immersive-ar').then((supported) => {
+          if (!supported) {
+            alert("Your device does not support ARCore/WebXR. Please ensure ARCore is installed and enabled.");
+          }
+        });
+      }
+    </script>
+
+    <a-scene
+      physics="debug: false"
+      embedded
+      arjs="sourceType: webcam; debugUIEnabled: false;"
+      xr="ar: true;"
+    >
+      <!-- Ground Plane -->
+      <a-plane
+        static-body
+        rotation="-90 0 0"
+        width="5000"
+        height="5000"
+        color="#cccccc"
+        opacity="0.5"
+      ></a-plane>
+
+      <!-- Nike Shoe (Interactive Object) -->
+      <a-entity
+        id="nike-shoe"
+        dynamic-body
+        gltf-model="./shoe.glb"
+        position="0 0.5 -2"
+        scale="0.2 0.2 0.2"
+        class="clickable"
+      ></a-entity>
+
+      <!-- Basket (Target) -->
+      <a-entity
+        id="basket"
+        static-body
+        gltf-model="./basket.glb"
+        position="0 0.5 -4"
+        scale="1 1 1"
+      ></a-entity>
+
+      <!-- Instructions Text -->
+      <a-text
+        value="Throw the shoe into the basket!"
+        position="0 2 -3"
+        align="center"
+        color="#000"
+      ></a-text>
+
+      <!-- Camera Setup with WebXR -->
+      <a-camera
+        position="0 1.6 0"
+        look-controls
+        webxr=""  
+      ></a-camera>
+
+      <!-- Interactivity Script -->
+      <script>
+        document.addEventListener("click", (event) => {
+          const shoe = document.getElementById("nike-shoe");
+          if (shoe) {
+            console.log("Shoe clicked! Throwing...");
+            shoe.body.velocity.set(0, 2, -5); // Adjust velocity for realistic throwing
+          }
+        });
+
+        // Debugging log for scene initialization
+        document.querySelector("a-scene").addEventListener("loaded", () => {
+          console.log("WebXR AR Scene initialized successfully!");
+        });
+      </script>
     </a-scene>
   </body>
 </html>
