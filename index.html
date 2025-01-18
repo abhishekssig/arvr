@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!--  <!DOCTYPE html>
 <html>
   <head>
     <title>AR with Scroll</title>
@@ -26,7 +26,7 @@
     </style>
   </head>
   <body>
-    <!-- AR Window -->
+    
     <div id="ar-container">
       <a-scene embedded arjs>
         <a-box position="0 0.5 -2" rotation="0 45 0" color="#4CC3D9"></a-box>
@@ -35,7 +35,7 @@
       </a-scene>
     </div>
 
-    <!-- Scrollable Content -->
+    
     <div id="content">
       <h1>Welcome to AR with Scroll</h1>
       <p>
@@ -43,6 +43,96 @@
       </p>
       <p>More content...</p>
       <p>Even more content...</p>
+    </div>
+  </body>
+</html>
+ -->
+
+
+ <!DOCTYPE html>
+<html>
+  <head>
+    <title>AR Object Placement</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/aframe-ar@1.7.2/build/aframe-ar.min.js"></script>
+    <style>
+      body {
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+      }
+      #ar-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 50vh; /* AR window takes half the screen */
+        background-color: black;
+        z-index: 10;
+      }
+      #content {
+        margin-top: 50vh; /* Leave space for the AR window */
+        padding: 20px;
+        overflow-y: scroll;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- AR Window -->
+    <div id="ar-container">
+      <a-scene
+        embedded
+        arjs="sourceType: webcam; debugUIEnabled: false;"
+        cursor="rayOrigin: mouse"
+      >
+        <!-- Add a plane for ground detection -->
+        <a-plane
+          position="0 0 0"
+          rotation="-90 0 0"
+          width="5000"
+          height="5000"
+          color="#000000"
+          opacity="0"
+          arjs-ground
+        ></a-plane>
+
+        <!-- Placeable object -->
+        <a-entity
+          id="placeable-object"
+          geometry="primitive: box"
+          material="color: red"
+          position="0 0.5 0"
+          scale="0.5 0.5 0.5"
+          visible="false"
+        ></a-entity>
+
+        <!-- Scripts to handle tap-to-place -->
+        <script>
+          document.addEventListener("click", (event) => {
+            const intersectedEl = document
+              .querySelector("[arjs-ground]")
+              .components.raycaster.getIntersection(
+                document.querySelector("a-plane")
+              );
+
+            if (intersectedEl) {
+              const object = document.getElementById("placeable-object");
+              object.setAttribute("visible", "true");
+              object.setAttribute("position", intersectedEl.point);
+            }
+          });
+        </script>
+      </a-scene>
+    </div>
+
+    <!-- Scrollable Content -->
+    <div id="content">
+      <h1>AR Object Placement</h1>
+      <p>
+        Tap anywhere on the ground to place the red box. Scroll down for more
+        information!
+      </p>
+      <p>More content...</p>
     </div>
   </body>
 </html>
